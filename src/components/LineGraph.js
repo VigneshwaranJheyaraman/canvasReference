@@ -51,13 +51,14 @@ class LineGraph extends Component
         var stepSize =0;
         for(var i = lineGraphStartingPoint; i<=(this.state.canvas.height - this.state.canvasMargin); i += this.state.graphBoxSize)
         {
-            ctx.moveTo(lineGraphStartingPoint, i);
             var yCoordPosition = (stepSize);
             ctx.fillText(`${yCoordPosition}`, (lineGraphStartingPoint -this.state.xcoordMargin), i);
             stepSize += 10; //y axis step size
-            ctx.lineTo((this.state.canvas.width - this.state.canvasMargin), i);
-            ctx.stroke();
         }
+        ctx.moveTo(lineGraphStartingPoint, lineGraphStartingPoint);
+        ctx.lineTo(lineGraphStartingPoint, (this.state.canvas.height - this.state.canvasMargin));
+        ctx.stroke();
+        ctx.closePath();
     }
 
     drawXAxis(ctx)
@@ -67,15 +68,26 @@ class LineGraph extends Component
         var stepSize = 0;
         for(var i = lineGraphStartingPoint; i<=(this.state.canvas.width - this.state.canvasMargin) ;(i += this.state.graphBoxSize))
         {
-            ctx.moveTo(i, lineGraphStartingPoint);
-            ctx.lineTo(i, this.state.canvas.height - this.state.canvasMargin);
             var xPointCoord = (stepSize);
             ctx.fillText(`${xPointCoord}`, (i), (lineGraphStartingPoint - this.state.ycoordMargin));
             stepSize++;
-            ctx.stroke();
         }
+        ctx.moveTo(lineGraphStartingPoint, lineGraphStartingPoint);
+        ctx.lineTo((this.state.canvas.width - this.state.canvasMargin), lineGraphStartingPoint);
+        ctx.stroke();
         ctx.closePath();
 
+    }
+
+    generateRandomColor()
+    {
+        var color = "#";
+        var values = '0123456789ABCDEF';
+        for(var i=0;i<6;i++)
+        {
+            color += values[Math.floor(Math.random() * values.length)];
+        }
+        return color;
     }
 
     plotDataSet(ctx)
@@ -83,24 +95,33 @@ class LineGraph extends Component
         var lineGraphStartingPoint = (this.state.canvasMargin + this.state.graphBoxSize);
         ctx.beginPath();
         ctx.moveTo(lineGraphStartingPoint, lineGraphStartingPoint);
-        this.props.yAxisDataSet.forEach((v,i) => {
-            let plotDotOffsetY = (((lineGraphStartingPoint+ (v -(10* Math.floor(v / 10)))))+(this.state.graphBoxSize* Math.floor(v / 10)));
-            let plotDotOffsetX = (lineGraphStartingPoint +(this.state.graphBoxSize * (this.props.xAxisDataSet[i])));
-            ctx.arc(plotDotOffsetX, plotDotOffsetY, 4, 0, Math.PI*2, true);
-            ctx.fillStyle="#f00";
-            ctx.fill();
-            ctx.closePath();
-        });
+        for(let j in this.props.yAxisDataSet)
+        {
+            this.props.yAxisDataSet[j].forEach((v,i) => {
+                let plotDotOffsetY = (((lineGraphStartingPoint+ (v -(10* Math.floor(v / 10)))))+(this.state.graphBoxSize* Math.floor(v / 10)));
+                let plotDotOffsetX = (lineGraphStartingPoint +(this.state.graphBoxSize * (this.props.xAxisDataSet[i])));
+                ctx.arc(plotDotOffsetX, plotDotOffsetY, 4, 0, Math.PI*2, true);
+                ctx.fillStyle= this.generateRandomColor();
+                ctx.fill();
+                ctx.closePath();
+            });
+            ctx.beginPath();
+            ctx.moveTo(lineGraphStartingPoint, lineGraphStartingPoint);
+        }
+        ctx.closePath();
         ctx.beginPath();
         ctx.moveTo(lineGraphStartingPoint, lineGraphStartingPoint);
-        ctx.moveTo(lineGraphStartingPoint, lineGraphStartingPoint);
-        this.props.yAxisDataSet.forEach((v,i) => {
-            let plotDotOffsetY = (((lineGraphStartingPoint+ (v -(10* Math.floor(v / 10)))))+(this.state.graphBoxSize* Math.floor(v / 10)));
-            let plotDotOffsetX = (lineGraphStartingPoint +(this.state.graphBoxSize * (this.props.xAxisDataSet[i])));
-            ctx.lineTo(plotDotOffsetX, plotDotOffsetY);
-            ctx.moveTo(plotDotOffsetX,plotDotOffsetY);
-            ctx.stroke();
-        });
+        for(let j in this.props.yAxisDataSet)
+        {
+            ctx.moveTo(lineGraphStartingPoint, lineGraphStartingPoint);
+            this.props.yAxisDataSet[j].forEach((v,i) => {
+                let plotDotOffsetY = (((lineGraphStartingPoint+ (v -(10* Math.floor(v / 10)))))+(this.state.graphBoxSize* Math.floor(v / 10)));
+                let plotDotOffsetX = (lineGraphStartingPoint +(this.state.graphBoxSize * (this.props.xAxisDataSet[i])));
+                ctx.lineTo(plotDotOffsetX, plotDotOffsetY);
+                ctx.moveTo(plotDotOffsetX,plotDotOffsetY);
+                ctx.stroke();
+            });
+        }
         ctx.closePath();
     }
 
@@ -117,14 +138,17 @@ class LineGraph extends Component
     {
         var ctx = this.state.canvas.getContext("2d");
         this.setState({toolTipVisibility:"hidden"}, () => {
-            this.props.yAxisDataSet.forEach((v,i) => {
-                let plotDotOffsetY = (((startPt+ (v -(10* Math.floor(v / 10)))))+(this.state.graphBoxSize* Math.floor(v / 10)));
-                let plotDotOffsetX = (startPt +(this.state.graphBoxSize * (this.props.xAxisDataSet[i])));
-                if(Math.floor(Math.abs((this.state.mouseX) - plotDotOffsetX) <= 3) && (Math.abs(Math.floor(this.state.mouseY) - plotDotOffsetY)) <= 3)
-                {
-                    this.setState({coords:this.props.xAxisDataSet[i]+","+v, toolTipVisibility:"visible", toolTipTop: this.state.mouseY+this.state.canvas.height, toolTipLeft:this.state.mouseX +plotDotOffsetX - this.state.canvasMargin + (Math.floor(v/10) * this.state.graphBoxSize) });
-                }
-            });
+            for(let j in this.props.yAxisDataSet)
+            {
+                this.props.yAxisDataSet[j].forEach((v,i) => {
+                    let plotDotOffsetY = (((startPt+ (v -(10* Math.floor(v / 10)))))+(this.state.graphBoxSize* Math.floor(v / 10)));
+                    let plotDotOffsetX = (startPt +(this.state.graphBoxSize * (this.props.xAxisDataSet[i])));
+                    if(Math.floor(Math.abs((this.state.mouseX) - plotDotOffsetX) <= 3) && (Math.abs(Math.floor(this.state.mouseY) - plotDotOffsetY)) <= 3)
+                    {
+                        this.setState({coords:this.props.xAxisDataSet[i]+","+v, toolTipVisibility:"visible", toolTipTop: this.state.mouseY + this.state.canvas.height, toolTipLeft:this.state.mouseX + plotDotOffsetX });
+                    }
+                });
+            }
         });
         ctx.closePath();
     }
