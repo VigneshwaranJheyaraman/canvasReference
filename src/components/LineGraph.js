@@ -115,16 +115,18 @@ class LineGraph extends Component
 
     checkCoordMatches(startPt)
     {
+        var ctx = this.state.canvas.getContext("2d");
         this.setState({toolTipVisibility:"hidden"}, () => {
             this.props.yAxisDataSet.forEach((v,i) => {
                 let plotDotOffsetY = (((startPt+ (v -(10* Math.floor(v / 10)))))+(this.state.graphBoxSize* Math.floor(v / 10)));
                 let plotDotOffsetX = (startPt +(this.state.graphBoxSize * (this.props.xAxisDataSet[i])));
                 if(Math.floor(Math.abs((this.state.mouseX) - plotDotOffsetX) <= 3) && (Math.abs(Math.floor(this.state.mouseY) - plotDotOffsetY)) <= 3)
                 {
-                    this.setState({coords:this.props.xAxisDataSet[i]+","+v, toolTipVisibility:"visible", toolTipTop: this.state.mouseY+this.state.canvas.height, toolTipLeft:this.state.mouseX+plotDotOffsetX});
+                    this.setState({coords:this.props.xAxisDataSet[i]+","+v, toolTipVisibility:"visible", toolTipTop: this.state.mouseY+this.state.canvas.height, toolTipLeft:this.state.mouseX +plotDotOffsetX - this.state.canvasMargin + (Math.floor(v/10) * this.state.graphBoxSize) });
                 }
             });
         });
+        ctx.closePath();
     }
 
     render()
