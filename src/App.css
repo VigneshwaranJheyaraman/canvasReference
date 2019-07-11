@@ -17,10 +17,7 @@ html, body, #root
     margin: 15px;
     background-color: lightgray;
 }
-.tooltip {
-    position: relative;
-    display: inline-block;
-    border-bottom: 1px dotted black;
+.tooltip {position:fixed;padding:7px;background:gold;pointer-events:none;width:40px;
   }
   
   .tooltip .tooltiptext {

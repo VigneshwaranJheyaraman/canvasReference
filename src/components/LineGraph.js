@@ -85,7 +85,6 @@ class LineGraph extends Component
         this.props.yAxisDataSet.forEach((v,i) => {
             let plotDotOffsetY = (((lineGraphStartingPoint+ (v -(10* Math.floor(v / 10)))))+(this.state.graphBoxSize* Math.floor(v / 10)));
             let plotDotOffsetX = (lineGraphStartingPoint +(this.state.graphBoxSize * (this.props.xAxisDataSet[i])));
-            console.log(plotDotOffsetX, plotDotOffsetY,this.props.xAxisDataSet[i], v, v- (this.state.graphBoxSize* Math.floor(v / 10)), this.state.graphBoxSize* Math.floor(v / 10));
             ctx.arc(plotDotOffsetX, plotDotOffsetY, 4, 0, Math.PI*2, true);
             ctx.fillStyle="#f00";
             ctx.fill();
@@ -110,7 +109,7 @@ class LineGraph extends Component
                 let plotDotOffsetX = (startPt +(this.state.graphBoxSize * (this.props.xAxisDataSet[i])));
                 if(Math.floor(Math.abs((this.state.mouseX) - plotDotOffsetX) <= 3) && (Math.abs(Math.floor(this.state.mouseY) - plotDotOffsetY)) <= 3)
                 {
-                    this.setState({coords:this.props.xAxisDataSet[i]+","+v, toolTipVisibility:"visible", toolTipTop: plotDotOffsetY, toolTipLeft:plotDotOffsetX});
+                    this.setState({coords:this.props.xAxisDataSet[i]+","+v, toolTipVisibility:"visible", toolTipTop: this.state.mouseY+this.state.canvas.height, toolTipLeft:this.state.mouseX+plotDotOffsetX});
                 }
             });
         });
@@ -121,8 +120,7 @@ class LineGraph extends Component
         return (
             <div>
                 <canvas id={this.props.canvasId} width = {this.props.canvasWidth} height={this.props.canvasHeight} style={{border:"1px solid",margin:"10px"}} ref={this.canvasRef} onMouseMove={this.mousePosition}/>
-                <div className="tooltip" style={{visibility:this.state.toolTipVisibility}}>{this.state.coords}
-                    <span className="tooltiptext">{this.state.coords}</span>
+                <div className="tooltip" style={{visibility:this.state.toolTipVisibility, top:this.state.toolTipTop, left:this.state.toolTipLeft}}>{this.state.coords}
                 </div>
             </div>
         );

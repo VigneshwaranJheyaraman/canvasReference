@@ -102,9 +102,7 @@ class PieChart extends Component
     {
         return (<div><canvas id={this.props.canvasId} ref={this.canvasRef} width = {this.props.canvasWidth} height={this.props.canvasHeight}  style={{border:"1px solid"}}/>
         <button onClick={(e) => {
-            this.setState({chartType:!this.state.chartType}, () => {
-                console.log("clicked");
-            });
+            this.setState({chartType:!this.state.chartType});
         }}>Doughnut Chart</button></div>);
     }
 };
