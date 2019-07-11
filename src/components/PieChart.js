@@ -83,10 +83,10 @@ class PieChart extends Component
 
     drawPieSlice(ctx, centerX, centerY, radius, startAngle, endAngle, color)
     {
-        ctx.fillStyle = color;
         ctx.beginPath();
         ctx.moveTo(centerX, centerY);
         ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+        ctx.fillStyle = color;
         ctx.fill();
         ctx.closePath();
     }

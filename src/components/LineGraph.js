@@ -145,7 +145,11 @@ class LineGraph extends Component
                     let plotDotOffsetX = (startPt +(this.state.graphBoxSize * (this.props.xAxisDataSet[i])));
                     if(Math.floor(Math.abs((this.state.mouseX) - plotDotOffsetX) <= 3) && (Math.abs(Math.floor(this.state.mouseY) - plotDotOffsetY)) <= 3)
                     {
-                        this.setState({coords:this.props.xAxisDataSet[i]+","+v, toolTipVisibility:"visible", toolTipTop: this.state.mouseY + this.state.canvas.height, toolTipLeft:this.state.mouseX + plotDotOffsetX });
+                        this.setState({coords:this.props.xAxisDataSet[i]+","+v, toolTipVisibility:"visible", 
+                        toolTipTop: this.state.mouseY + this.state.canvas.height, 
+                        toolTipLeft:i < this.props.yAxisDataSet[j].length/2?
+                         this.state.mouseX + plotDotOffsetX + this.state.canvas.width
+                         :this.state.mouseX + this.state.canvas.width + (Math.floor(this.props.yAxisDataSet[j] /10) *  this.state.graphBoxSize) });
                     }
                 });
             }
