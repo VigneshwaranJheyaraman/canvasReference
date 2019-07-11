@@ -82,6 +82,7 @@ class LineGraph extends Component
     {
         var lineGraphStartingPoint = (this.state.canvasMargin + this.state.graphBoxSize);
         ctx.beginPath();
+        ctx.moveTo(lineGraphStartingPoint, lineGraphStartingPoint);
         this.props.yAxisDataSet.forEach((v,i) => {
             let plotDotOffsetY = (((lineGraphStartingPoint+ (v -(10* Math.floor(v / 10)))))+(this.state.graphBoxSize* Math.floor(v / 10)));
             let plotDotOffsetX = (lineGraphStartingPoint +(this.state.graphBoxSize * (this.props.xAxisDataSet[i])));
@@ -90,6 +91,17 @@ class LineGraph extends Component
             ctx.fill();
             ctx.closePath();
         });
+        ctx.beginPath();
+        ctx.moveTo(lineGraphStartingPoint, lineGraphStartingPoint);
+        ctx.moveTo(lineGraphStartingPoint, lineGraphStartingPoint);
+        this.props.yAxisDataSet.forEach((v,i) => {
+            let plotDotOffsetY = (((lineGraphStartingPoint+ (v -(10* Math.floor(v / 10)))))+(this.state.graphBoxSize* Math.floor(v / 10)));
+            let plotDotOffsetX = (lineGraphStartingPoint +(this.state.graphBoxSize * (this.props.xAxisDataSet[i])));
+            ctx.lineTo(plotDotOffsetX, plotDotOffsetY);
+            ctx.moveTo(plotDotOffsetX,plotDotOffsetY);
+            ctx.stroke();
+        });
+        ctx.closePath();
     }
 
     mousePosition(e)
