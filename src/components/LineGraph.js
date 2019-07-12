@@ -64,16 +64,17 @@ class LineGraph extends Component
     drawXAxis(ctx)
     {
         var lineGraphStartingPoint = (this.state.canvasMargin + this.state.graphBoxSize);
+        var xAxisLinePoint = ((this.state.canvas.height) - this.state.canvasMargin);
         ctx.beginPath();
         var stepSize = 0;
         for(var i = lineGraphStartingPoint; i<=(this.state.canvas.width - this.state.canvasMargin) ;(i += this.state.graphBoxSize))
         {
             var xPointCoord = (stepSize);
-            ctx.fillText(`${xPointCoord}`, (i), (lineGraphStartingPoint - this.state.ycoordMargin));
+            ctx.fillText(`${xPointCoord}`, (i), (xAxisLinePoint + this.state.ycoordMargin));
             stepSize++;
         }
-        ctx.moveTo(lineGraphStartingPoint, lineGraphStartingPoint);
-        ctx.lineTo((this.state.canvas.width - this.state.canvasMargin), lineGraphStartingPoint);
+        ctx.moveTo(lineGraphStartingPoint, xAxisLinePoint);
+        ctx.lineTo((this.state.canvas.width - this.state.canvasMargin), xAxisLinePoint);
         ctx.stroke();
         ctx.closePath();
 
@@ -100,7 +101,14 @@ class LineGraph extends Component
             this.props.yAxisDataSet[j].forEach((v,i) => {
                 let plotDotOffsetY = (((lineGraphStartingPoint+ (v -(10* Math.floor(v / 10)))))+(this.state.graphBoxSize* Math.floor(v / 10)));
                 let plotDotOffsetX = (lineGraphStartingPoint +(this.state.graphBoxSize * (this.props.xAxisDataSet[i])));
-                ctx.arc(plotDotOffsetX, plotDotOffsetY, 4, 0, Math.PI*2, true);
+                if(this.props.shape === "square")
+                {
+                    ctx.fillRect(plotDotOffsetX, plotDotOffsetY, 10,10);
+                }
+                else
+                {
+                    ctx.arc(plotDotOffsetX, plotDotOffsetY, 4, 0, Math.PI*2, true);
+                }
                 ctx.fillStyle= this.generateRandomColor();
                 ctx.fill();
                 ctx.closePath();

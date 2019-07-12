@@ -11,7 +11,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "print":"node C:/Users/vigneshwaran.j/Documents/Vignesh/s.js"
   },
   "eslintConfig": {
     "extends": "react-app"
