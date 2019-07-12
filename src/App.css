@@ -5,17 +5,42 @@ html, body, #root
 }
 .canvas
 {
-    width:90%;
-    height: 90%;
-    text-align: center;
+    width:100%;
+    height: 100%;
 }
-#linegraph
+.tooltip {
+    position:fixed;
+    padding:7px;
+    background:gold;
+    pointer-events:none;
+    width:40px;
+}
+
+@media(min-width:576px)
 {
-    width: inherit;
-    height: inherit;
-    display: inline-block;
-    margin: 15px;
-    background-color: lightgray;
+    .canvas div canvas
+    {
+        max-width: 540px;
+    }
 }
-.tooltip {position:fixed;padding:7px;background:gold;pointer-events:none;width:40px;
-  }
+@media(min-width:768px)
+{
+    .canvas div canvas
+    {
+        max-width: 420px;
+    }
+}
+@media(min-width:992px)
+{
+    .canvas
+    {
+        max-width: 300px;
+    }
+}
+@media(min-width:1200px)
+{
+    .canvas canvas
+    {
+        max-width: 260px;
+    }
+}

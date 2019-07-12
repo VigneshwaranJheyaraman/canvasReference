@@ -109,7 +109,7 @@ class LineGraph extends Component
                 {
                     ctx.arc(plotDotOffsetX, plotDotOffsetY, 4, 0, Math.PI*2, true);
                 }
-                ctx.fillStyle= this.generateRandomColor();
+                ctx.fillStyle= "grey";
                 ctx.fill();
                 ctx.closePath();
             });
@@ -137,14 +137,33 @@ class LineGraph extends Component
     {
         var lineGraphStartingPoint = (this.state.canvasMargin + this.state.graphBoxSize);
         var ctx = this.state.canvas.getContext("2d");
+        ctx.clearRect(0,0,this.state.canvas.width, this.state.canvas.height);
+        this.drawXAxis(ctx);
+        this.drawYAxis(ctx);
+        this.plotDataSet(ctx)
         var rect = this.state.canvas.getBoundingClientRect();
         ctx.beginPath();
         this.setState({mouseX : e.clientX - rect.left, mouseY: e.clientY - rect.top}, this.checkCoordMatches(lineGraphStartingPoint));
     }
 
+    drawCrossHair(ctx)
+    {
+        if(this.props.crossHair)
+        {
+            ctx.beginPath();
+            ctx.moveTo(this.state.mouseX, 0);
+            ctx.lineTo(this.state.mouseX, this.state.canvas.height - this.state.canvasMargin);
+            ctx.moveTo(0, this.state.mouseY);
+            ctx.lineTo(this.state.canvas.width - this.state.canvasMargin, this.state.mouseY);
+            ctx.stroke();
+            ctx.closePath();
+        }
+    }
+
     checkCoordMatches(startPt)
     {
         var ctx = this.state.canvas.getContext("2d");
+        this.drawCrossHair(ctx);
         this.setState({toolTipVisibility:"hidden"}, () => {
             for(let j in this.props.yAxisDataSet)
             {
@@ -155,9 +174,8 @@ class LineGraph extends Component
                     {
                         this.setState({coords:this.props.xAxisDataSet[i]+","+v, toolTipVisibility:"visible", 
                         toolTipTop: this.state.mouseY + this.state.canvas.height, 
-                        toolTipLeft:i < this.props.yAxisDataSet[j].length/2?
-                         this.state.mouseX + plotDotOffsetX + this.state.canvas.width
-                         :this.state.mouseX + this.state.canvas.width + (Math.floor(this.props.yAxisDataSet[j] /10) *  this.state.graphBoxSize) });
+                        toolTipLeft:this.state.mouseX
+                        }, () => {console.log(this.state.mouseX, this.state.mouseY)});
                     }
                 });
             }
