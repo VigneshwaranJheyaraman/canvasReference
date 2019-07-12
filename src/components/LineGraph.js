@@ -146,7 +146,7 @@ class LineGraph extends Component
         this.setState({mouseX : e.clientX - rect.left, mouseY: e.clientY - rect.top}, this.checkCoordMatches(lineGraphStartingPoint));
     }
 
-    drawCrossHair(ctx)
+    drawCrossHair(ctx,x,y)
     {
         if(this.props.crossHair)
         {
@@ -155,6 +155,16 @@ class LineGraph extends Component
             ctx.lineTo(this.state.mouseX, this.state.canvas.height - this.state.canvasMargin);
             ctx.moveTo(0, this.state.mouseY);
             ctx.lineTo(this.state.canvas.width - this.state.canvasMargin, this.state.mouseY);
+            if(x !== 0 && y !== 0)
+            {
+                ctx.font="20px Courier New";
+                ctx.fillStyle="#f00";
+                ctx.fillText(`${x},${y}`, this.state.mouseX + this.state.xcoordMargin, this.state.mouseY+this.state.ycoordMargin);
+            }
+            else
+            {
+                ctx.font = "10px sans-serif";
+            }
             ctx.stroke();
             ctx.closePath();
         }
@@ -163,7 +173,6 @@ class LineGraph extends Component
     checkCoordMatches(startPt)
     {
         var ctx = this.state.canvas.getContext("2d");
-        this.drawCrossHair(ctx);
         this.setState({toolTipVisibility:"hidden"}, () => {
             for(let j in this.props.yAxisDataSet)
             {
@@ -175,7 +184,10 @@ class LineGraph extends Component
                         this.setState({coords:this.props.xAxisDataSet[i]+","+v, toolTipVisibility:"visible", 
                         toolTipTop: this.state.mouseY + this.state.canvas.height, 
                         toolTipLeft:this.state.mouseX
-                        }, () => {console.log(this.state.mouseX, this.state.mouseY)});
+                        }, () => {this.drawCrossHair(ctx, this.props.xAxisDataSet[i],v);});
+                    }
+                    else{
+                        this.drawCrossHair(ctx,0,0);
                     }
                 });
             }
