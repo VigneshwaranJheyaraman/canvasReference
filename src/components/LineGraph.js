@@ -158,12 +158,14 @@ class LineGraph extends Component
             if(x !== 0 && y !== 0)
             {
                 ctx.font="20px Courier New";
-                ctx.fillStyle="#f00";
-                ctx.fillText(`${x},${y}`, this.state.mouseX + this.state.xcoordMargin, this.state.mouseY+this.state.ycoordMargin);
+                ctx.fillText(`${x},${y}`, this.state.mouseX, this.state.mouseY);
             }
             else
             {
-                ctx.font = "10px sans-serif";
+                var yCoord = this.state.mouseY === 90 ? 0 : ((this.state.mouseY - (this.state.canvasMargin + this.state.graphBoxSize)) / this.state.graphBoxSize) * 10;
+                var xCoord = this.state.mouseX === 90 ? 0 : ((this.state.mouseX - (this.state.canvasMargin + this.state.graphBoxSize)) / this.state.graphBoxSize) * 1;
+                ctx.font = "13px sans-serif";
+                ctx.fillText(`${xCoord.toFixed(2)}, ${yCoord.toFixed(2)}`, this.state.mouseX, this.state.mouseY);
             }
             ctx.stroke();
             ctx.closePath();
