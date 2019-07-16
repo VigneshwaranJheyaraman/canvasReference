@@ -21,7 +21,11 @@ class LineGraph extends Component
         this.canvasRef = React.createRef();
         this.mousePosition = this.mousePosition.bind(this);
         this.drawYAxis = this.drawYAxis.bind(this);
-        this.plotDataSet = this.plotDataSet.bind(this);
+        this.plotDataSet = this.plotDataSet.bind(this);/* 
+        this.equationOfLine = this.equationOfLine.bind(this);
+        this.findXBar = this.findXBar.bind(this);
+        this.getSummationXY = this.getSummationXY.bind(this);
+        this.findSummationXSquare = this.findSummationXSquare.bind(this); */
     }
     
     componentDidMount()
@@ -32,6 +36,7 @@ class LineGraph extends Component
             this.drawXAxis(this.state.canvas.getContext("2d"));
             this.plotDataSet(this.state.canvas.getContext("2d"));
         });
+        //this.equationOfLine();
     }
 
     getMinimumValue(array)
@@ -216,7 +221,66 @@ class LineGraph extends Component
         ctx.closePath();
     }
 
-    render()
+/* Line equation zone
+    equationOfLine()
+    {
+        let xBar = this.findXBar();
+        let xSquareBar = this.findSummationXSquare();
+        var slope = {};
+        var yBar ={};
+        var yIntercept = {};
+        let summationXY = {};
+        var totalGraphSlopesNr = {};
+        var totalGraphSlopeDr ={};
+        for(var j in this.props.yAxisDataSet)
+        {
+            yBar[j] = this.findYBar(this.props.yAxisDataSet[j]);
+            summationXY[j] = this.getSummationXY(this.props.yAxisDataSet[j]);
+            this.props.yAxisDataSet[j].forEach((v,i) => {
+                totalGraphSlopesNr[j] = (((this.props.xAxisDataSet.length) * summationXY[j]) - (xBar * yBar[j]));
+                totalGraphSlopeDr[j] = (((this.props.xAxisDataSet.length) * xSquareBar) - (Math.pow(xBar, 2)));
+            });
+            console.log(`y-axis = ${this.props.yAxisDataSet[j]}\n x-axis = ${this.props.xAxisDataSet}\n EX = ${xBar} EX^2 = ${xSquareBar}\n EY = ${yBar[j]} EXY = ${summationXY[j]}`);
+            slope[j] = (totalGraphSlopesNr[j] / totalGraphSlopeDr[j]).toFixed(3);
+            yIntercept[j] = (((yBar[j]) - (slope[j] * xBar))/ this.props.xAxisDataSet.length).toFixed(3)
+            console.log(`The equation of line ${j} is y = ${slope[j]}x ${yIntercept[j] > 0 ?"+" :""}${yIntercept[j]}`);
+        }
+    }
+
+    getSummationXY(arr)
+    {
+        let summationXY =0;
+        arr.forEach((v,i) => {
+            if(!isNaN(this.props.xAxisDataSet[i]))
+            {
+                summationXY += (this.props.xAxisDataSet[i]*v);
+            }
+        });
+        return summationXY;
+    }
+
+    findYBar(arra)
+    {
+        let mean = arra.reduce((t,v) => {return t+v;});
+        return mean;
+    }
+
+    findXBar()
+    {
+        let mean = this.props.xAxisDataSet.reduce((t,v) => {return t+v;});
+        return mean;
+    }
+
+    findSummationXSquare()
+    {
+        let summation =0;
+        this.props.xAxisDataSet.forEach((v) => {
+            summation += (v*v);
+        });
+        return summation;
+    }
+
+ */    render()
     {
         return (
             <div>
