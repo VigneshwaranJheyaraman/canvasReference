@@ -35,7 +35,7 @@ class LineGraph extends Component
         let graphAlpha ={};
         for(var j in this.props.yAxisDataSet)
         {
-            graphAlpha[j] = 0.6;
+            graphAlpha[j] = 0.4;
         }
         this.setState({canvas : this.canvasRef.current, graphAlpha: graphAlpha}, () => {
             this.state.canvas.getContext("2d").clearRect(0,0,this.props.canvasWidth, this.props.canvasHeight);
@@ -223,7 +223,7 @@ class LineGraph extends Component
                     }
                     else{
                         this.drawCrossHair(ctx,0,0);
-                        this.setState({graphAlpha:Object.assign({}, this.state.graphAlpha, {[this.state.hoveredGraph]:0.6})});
+                        this.setState({graphAlpha:Object.assign({}, this.state.graphAlpha, {[this.state.hoveredGraph]:0.4})});
                     }
                 });
             }
