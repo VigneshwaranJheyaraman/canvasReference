@@ -16,7 +16,9 @@ class LineGraph extends Component
             toolTipLeft:0,
             toolTipTop: 0,
             coords: "",
-            canvas:null
+            canvas:null,
+            graphAlpha :{},
+            hoveredGraph:1
         };
         this.canvasRef = React.createRef();
         this.mousePosition = this.mousePosition.bind(this);
@@ -30,7 +32,12 @@ class LineGraph extends Component
     
     componentDidMount()
     {
-        this.setState({canvas : this.canvasRef.current}, () => {
+        let graphAlpha ={};
+        for(var j in this.props.yAxisDataSet)
+        {
+            graphAlpha[j] = 0.6;
+        }
+        this.setState({canvas : this.canvasRef.current, graphAlpha: graphAlpha}, () => {
             this.state.canvas.getContext("2d").clearRect(0,0,this.props.canvasWidth, this.props.canvasHeight);
             this.drawYAxis(this.state.canvas.getContext("2d"));
             this.drawXAxis(this.state.canvas.getContext("2d"));
@@ -147,7 +154,7 @@ class LineGraph extends Component
                     }
                 }
             });
-            ctx.strokeStyle=this.props.graphColors[j-1];
+            ctx.strokeStyle=this.hexToRGBA(this.props.graphColors[j-1], this.state.graphAlpha[j]);
             ctx.stroke();
             ctx.closePath();
         }
@@ -179,6 +186,7 @@ class LineGraph extends Component
             {
                 ctx.font="20px Courier New";
                 ctx.fillText(`${x},${y}`, this.state.mouseX +10, this.state.mouseY-10);
+                ctx.fill();
             }
             else
             {
@@ -207,18 +215,35 @@ class LineGraph extends Component
                     let plotDotOffsetX = (startPt +(this.state.graphBoxSize * (this.props.xAxisDataSet[i])));
                     if(Math.floor(Math.abs((this.state.mouseX) - plotDotOffsetX) <= 3) && (Math.abs(Math.floor(this.state.mouseY) - plotDotOffsetY)) <= 3)
                     {
-                        this.setState({coords:this.props.xAxisDataSet[i]+","+v, toolTipVisibility:"visible", 
-                        toolTipTop: this.state.mouseY + this.state.canvas.height, 
-                        toolTipLeft:this.state.mouseX
-                        }, () => {this.drawCrossHair(ctx, this.props.xAxisDataSet[i],v);});
+                        this.setState({hoveredGraph:j}, () => {
+                            this.setState({coords:this.props.xAxisDataSet[i]+","+v, toolTipVisibility:"visible", 
+                            toolTipTop: this.state.mouseY + this.state.canvas.height, 
+                            toolTipLeft:this.state.mouseX, graphAlpha:Object.assign({}, this.state.graphAlpha, {[this.state.hoveredGraph]:1})
+                            }, () => {this.drawCrossHair(ctx, this.props.xAxisDataSet[i],v);});});
                     }
                     else{
                         this.drawCrossHair(ctx,0,0);
+                        this.setState({graphAlpha:Object.assign({}, this.state.graphAlpha, {[this.state.hoveredGraph]:0.6})});
                     }
                 });
             }
         });
         ctx.closePath();
+    }
+
+    hexToRGBA(hex, alpha)
+    {
+        let color;
+        if(/#([a-fA-F0-9]{3}){1,2}/.test(hex))
+        {
+            color = hex.substring(1).split("");
+            color = "0x"+color.join("");
+            return (`rgba(${[(color>>16)&255, (color >> 8)&255, color&255].join(",")},${alpha})`);
+        }
+        else
+        {
+            return "rgba(0,0,255,1)";
+        }
     }
 
 /* Line equation zone
