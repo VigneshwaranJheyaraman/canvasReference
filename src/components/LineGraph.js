@@ -91,7 +91,7 @@ class LineGraph extends Component
         return color;
     }
 
-    plotDataSet(ctx)
+    plotDataSet(ctx, graphType)
     {
         var lineGraphStartingPoint = (this.state.canvasMargin + this.state.graphBoxSize);
         ctx.beginPath();
@@ -117,20 +117,35 @@ class LineGraph extends Component
             ctx.moveTo(lineGraphStartingPoint, lineGraphStartingPoint);
         }
         ctx.closePath();
-        ctx.beginPath();
-        ctx.moveTo(lineGraphStartingPoint, lineGraphStartingPoint);
         for(let j in this.props.yAxisDataSet)
         {
+            ctx.beginPath();
             ctx.moveTo(lineGraphStartingPoint, lineGraphStartingPoint);
             this.props.yAxisDataSet[j].forEach((v,i) => {
                 let plotDotOffsetY = (((lineGraphStartingPoint+ (v -(10* Math.floor(v / 10)))))+(this.state.graphBoxSize* Math.floor(v / 10)));
                 let plotDotOffsetX = (lineGraphStartingPoint +(this.state.graphBoxSize * (this.props.xAxisDataSet[i])));
-                ctx.lineTo(plotDotOffsetX, plotDotOffsetY);
-                ctx.moveTo(plotDotOffsetX,plotDotOffsetY);
-                ctx.stroke();
+                switch(graphType)
+                {
+                    case "curve":{
+                        let b_plotDotOffsetY = (((lineGraphStartingPoint+ (this.props.yAxisDataSet[j][i+1] -(10* Math.floor(this.props.yAxisDataSet[j][i+1] / 10)))))+(this.state.graphBoxSize* Math.floor(this.props.yAxisDataSet[j][i+1] / 10)));
+                        let b_plotDotOffsetX = (lineGraphStartingPoint +(this.state.graphBoxSize * (this.props.xAxisDataSet[i+1])));
+                        
+                        let xc = (plotDotOffsetX + b_plotDotOffsetX)/2;
+                        let yc = (plotDotOffsetY + b_plotDotOffsetY)/2;
+                        ctx.quadraticCurveTo(plotDotOffsetX, plotDotOffsetY, xc, yc);
+                        break;
+                    }
+                    default:{
+                        ctx.lineTo(plotDotOffsetX, plotDotOffsetY);
+                        ctx.moveTo(plotDotOffsetX,plotDotOffsetY);
+                        break;
+                    }
+                }
             });
+            ctx.strokeStyle=this.props.graphColors[j-1];
+            ctx.stroke();
+            ctx.closePath();
         }
-        ctx.closePath();
     }
 
     mousePosition(e)
@@ -140,7 +155,7 @@ class LineGraph extends Component
         ctx.clearRect(0,0,this.state.canvas.width, this.state.canvas.height);
         this.drawXAxis(ctx);
         this.drawYAxis(ctx);
-        this.plotDataSet(ctx)
+        this.plotDataSet(ctx, this.props.graphType);
         var rect = this.state.canvas.getBoundingClientRect();
         ctx.beginPath();
         this.setState({mouseX : e.clientX - rect.left, mouseY: e.clientY - rect.top}, this.checkCoordMatches(lineGraphStartingPoint));
@@ -170,6 +185,7 @@ class LineGraph extends Component
                     ctx.fillText(`${xCoord.toFixed(2)}, ${yCoord.toFixed(2)}`, this.state.mouseX, this.state.mouseY);
                 }
             }
+            ctx.strokeStyle = "#000";
             ctx.stroke();
             ctx.closePath();
         }
